@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>SpendEasy – Finance Tracker Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111827;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ══════════ SLIDE — DASHBOARD MOCKUP ══════════ */
+        .s-dash {
+            background: #0D1B2E;
+        }
+
+        .s-dash .hdr {
+            background: #071526;
+        }
+
+        .s-dash .hdr .lbl {
+            color: #22C796;
+        }
+
+        .s-dash .hdr h2 {
+            color: #fff;
+        }
+
+        .dash-layout {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 0;
+            flex: 1;
+            margin: 14px 44px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .08);
+            max-height: 122mm;
+        }
+
+        /* Sidebar */
+        .dash-sidebar {
+            background: #071526;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-right: 1px solid rgba(255, 255, 255, .07);
+        }
+
+        .dash-logo {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            padding: 2px 8px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            margin-bottom: 4px;
+        }
+
+        .dash-logo span {
+            color: #22C796;
+        }
+
+        .dash-nav-item {
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #7C9CBF;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dash-nav-item.active {
+            background: rgba(34, 199, 150, .15);
+            color: #22C796;
+        }
+
+        .dash-user {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, .07);
+            padding-top: 10px;
+            font-size: 10px;
+            color: #4B6180;
+            padding-left: 10px;
+        }
+
+        /* Main area */
+        .dash-main {
+            background: #0D1B2E;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        /* Top stat cards */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .stat {
+            background: #122035;
+            border-radius: 8px;
+            padding: 10px 12px;
+            border-top: 3px solid #22C796;
+        }
+
+        .stat.red {
+            border-top-color: #EF4444;
+        }
+
+        .stat.amber {
+            border-top-color: #F59E0B;
+        }
+
+        .stat.blue {
+            border-top-color: #3B82F6;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: #4B6180;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-sub {
+            font-size: 9px;
+            color: #22C796;
+            margin-top: 2px;
+        }
+
+        .stat.red .stat-sub {
+            color: #EF4444;
+        }
+
+        .stat.amber .stat-sub {
+            color: #F59E0B;
+        }
+
+        .stat.blue .stat-sub {
+            color: #3B82F6;
+        }
+
+        /* Middle row */
+        .mid-row {
+            display: grid;
+            grid-template-columns: 1fr 160px;
+            gap: 8px;
+        }
+
+        /* Spending bar chart (fake) */
+        .chart-box {
+            background: #122035;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .chart-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title .ctag {
+            font-size: 9px;
+            color: #22C796;
+            background: rgba(34, 199, 150, .12);
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 5px;
+            height: 52px;
+        }
+
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .bar {
+            width: 100%;
+            background: #22C796;
+            border-radius: 3px 3px 0 0;
+            opacity: .85;
+        }
+
+        .bar.low {
+            background: #3B82F6;
+            opacity: .7;
+        }
+
+        .bar-lbl {
+            font-size: 8px;
+            color: #4B6180;
+        }
+
+        /* Category donut (fake) */
+        .cat-box {
+            background: #122035;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .cat-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .cat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 5px;
+            font-size: 10px;
+            color: #7C9CBF;
+        }
+
+        .cat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .cat-bar-wrap {
+            flex: 1;
+            background: rgba(255, 255, 255, .07);
+            border-radius: 99px;
+            height: 5px;
+            overflow: hidden;
+        }
+
+        .cat-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+        }
+
+        .cat-pct {
+            font-size: 9px;
+            color: #fff;
+            font-weight: 700;
+            min-width: 24px;
+            text-align: right;
+        }
+
+        /* Transaction list */
+        .tx-box {
+            background: #122035;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .tx-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 7px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tx-title a {
+            color: #22C796;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .tx-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .tx-row:last-child {
+            border-bottom: none;
+        }
+
+        .tx-ico {
+            font-size: 14px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tx-info {
+            flex: 1;
+        }
+
+        .tx-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .tx-date {
+            font-size: 9px;
+            color: #4B6180;
+        }
+
+        .tx-tag {
+            font-size: 8.5px;
+            background: rgba(34, 199, 150, .12);
+            color: #22C796;
+            padding: 1px 6px;
+            border-radius: 999px;
+        }
+
+        .tx-amt {
+            font-size: 11px;
+            font-weight: 700;
+            color: #EF4444;
+        }
+
+        .add-btn {
+            background: #22C796;
+            color: #071526;
+            border: none;
+            border-radius: 7px;
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            align-self: flex-start;
+            margin-top: auto;
+        }
+
+        /* ── Each slide ── */
+        .slide {
+            width: 297mm;
+            min-height: 167mm;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .slide {
+                width: 100%;
+                min-height: 100vh;
+                page-break-after: always;
+                break-after: page;
+            }
+        }
+
+        /* ── Shared header bar ── */
+        .hdr {
+            background: #0B1D3A;
+            padding: 16px 44px;
+        }
+
+        .hdr .lbl {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #22C796;
+            margin-bottom: 3px;
+        }
+
+        .hdr h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        /* ── Bottom strip ── */
+        .strip {
+            background: rgba(0, 0, 0, .4);
+            padding: 9px;
+            text-align: center;
+            font-size: 10px;
+            color: #4B6180;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: auto;
+        }
+
+        /* ══════════ SLIDE 1 – COVER ══════════ */
+        .s1 {
+            background: linear-gradient(135deg, #0B1D3A 0%, #0f2a4a 100%);
+            color: #fff;
+        }
+
+        .s1-accent {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 10px;
+            height: 100%;
+            background: #22C796;
+        }
+
+        .s1-blob {
+            position: absolute;
+            right: -70px;
+            top: -70px;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            background: rgba(34, 199, 150, .08);
+        }
+
+        .s1-blob2 {
+            position: absolute;
+            right: 160px;
+            bottom: -90px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(34, 199, 150, .05);
+        }
+
+        .s1-body {
+            padding: 46px 56px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .s1-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #22C796;
+            margin-bottom: 10px;
+        }
+
+        .s1-title {
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 8px;
+        }
+
+        .s1-title span {
+            color: #22C796;
+        }
+
+        .s1-tagline {
+            font-size: 13.5px;
+            color: #7C9CBF;
+            margin-bottom: 6px;
+        }
+
+        .s1-sub {
+            font-size: 14px;
+            color: #8FA8CC;
+            max-width: 500px;
+            line-height: 1.65;
+            margin-bottom: 28px;
+        }
+
+        .pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            border: 1.5px solid rgba(34, 199, 150, .5);
+            background: rgba(34, 199, 150, .1);
+            color: #fff;
+            border-radius: 999px;
+            padding: 7px 17px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        /* ══════════ SLIDE 2 – WHAT IS IT ══════════ */
+        .s2 {
+            background: #F0F4F8;
+        }
+
+        .s2-body {
+            padding: 20px 44px 0;
+            flex: 1;
+        }
+
+        .vision-box {
+            background: #fff;
+            border-radius: 10px;
+            border-left: 5px solid #22C796;
+            padding: 16px 20px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: #2D3A55;
+            line-height: 1.7;
+        }
+
+        .vision-box strong {
+            color: #0B1D3A;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .feat {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 18px;
+            border-top: 4px solid #22C796;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        }
+
+        .feat .icon {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .feat h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0B1D3A;
+            margin-bottom: 5px;
+        }
+
+        .feat p {
+            font-size: 11.5px;
+            color: #4A5568;
+            line-height: 1.65;
+        }
+
+        .s2 .strip {
+            background: #0B1D3A;
+            color: #7C9CBF;
+            font-style: italic;
+            font-size: 11px;
+        }
+
+        /* ══════════ SLIDE 3 – PERSONAS ══════════ */
+        .s3 {
+            background: #fff;
+        }
+
+        .personas-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 22px 44px 0;
+            flex: 1;
+        }
+
+        .persona {
+            background: #F7FAFC;
+            border-radius: 12px;
+            overflow: hidden;
+            border-top: 5px solid #22C796;
+        }
+
+        .persona-head {
+            background: #0B1D3A;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .p-avatar {
+            font-size: 38px;
+        }
+
+        .p-meta .name {
+            font-size: 17px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .p-meta .tag {
+            font-size: 11px;
+            color: #22C796;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .persona-body {
+            padding: 16px 22px;
+        }
+
+        .p-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #2D3A55;
+        }
+
+        .p-row .pl {
+            font-weight: 700;
+            color: #0B1D3A;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        .s3 .strip {
+            background: #0B1D3A;
+            color: #7C9CBF;
+            margin-top: auto;
+        }
+
+        /* ══════════ SLIDE 4 – USER FLOWS ══════════ */
+        .s4 {
+            background: #F0F4F8;
+        }
+
+        .flows-area {
+            padding: 18px 44px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .flow-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+        }
+
+        .flow-card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0B1D3A;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #22C796;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .step-box {
+            background: #0B1D3A;
+            color: #fff;
+            border-radius: 7px;
+            padding: 7px 13px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.35;
+        }
+
+        .step-box.green {
+            background: #22C796;
+            color: #0B1D3A;
+        }
+
+        .step-box.amber {
+            background: #F59E0B;
+            color: #fff;
+        }
+
+        .step-box.red {
+            background: #EF4444;
+            color: #fff;
+        }
+
+        .arr {
+            color: #22C796;
+            font-weight: 900;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+
+        .s4 .strip {
+            background: #0B1D3A;
+            color: #7C9CBF;
+        }
+
+        /* ══════════ SLIDE 5 – IMPACT ══════════ */
+        .s5 {
+            background: linear-gradient(135deg, #0B1D3A 0%, #0f2a4a 100%);
+            color: #fff;
+        }
+
+        .s5-accent {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 10px;
+            height: 100%;
+            background: #22C796;
+        }
+
+        .s5-body {
+            padding: 0 52px 0 62px;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .s5-hdr {
+            padding: 22px 0 18px;
+        }
+
+        .s5-hdr h2 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .icard {
+            background: #122855;
+            border-radius: 10px;
+            padding: 16px 18px;
+            border-top: 4px solid #22C796;
+        }
+
+        .icard .itop {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .icard .iico {
+            font-size: 22px;
+        }
+
+        .icard .ititle {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .icard .ibody {
+            font-size: 12px;
+            color: #8FA8CC;
+            line-height: 1.65;
+        }
+
+        .s5 .strip {
+            background: rgba(0, 0, 0, .35);
+            color: #4B6180;
+        }
+
+        /* ── Print btn ── */
+        .print-btn {
+            position: fixed;
+            bottom: 26px;
+            right: 26px;
+            background: #22C796;
+            color: #0B1D3A;
+            border: none;
+            border-radius: 999px;
+            padding: 13px 26px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(34, 199, 150, .4);
+            font-family: 'Inter', sans-serif;
+            z-index: 999;
+        }
+
+        .print-btn:hover {
+            background: #1aaa80;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF</button>
+
+    <!-- ════════════════════════ SLIDE 1 – COVER ════════════════════════ -->
+    <div class="slide s1">
+        <div class="s1-accent"></div>
+        <div class="s1-blob"></div>
+        <div class="s1-blob2"></div>
+        <div class="s1-body">
+            <div class="s1-lbl">Product Design Document &nbsp;·&nbsp; Personal Finance</div>
+            <div class="s1-title">Spend<span>Easy</span><br><span
+                    style="font-size:32px;color:#8FA8CC;font-weight:600">Finance Tracker</span></div>
+            <div class="s1-tagline">"Stop wondering where your money went."</div>
+            <div class="s1-sub">
+                A minimalist tool that transforms everyday spending into clear, actionable insights —
+                built for real people, not accountants.
+            </div>
+            <div class="pills">
+                <span class="pill">💡 Clear Vision</span>
+                <span class="pill">👤 User Personas</span>
+                <span class="pill">🔀 User Flows</span>
+                <span class="pill">📊 Real Impact</span>
+            </div>
+        </div>
+        <div class="strip">Clarity &nbsp;·&nbsp; Intentionality &nbsp;·&nbsp; Simplicity</div>
+    </div>
+
+    <!-- ════════════════════════ SLIDE 2 – WHAT IS IT ════════════════════ -->
+    <div class="slide s2">
+        <div class="hdr">
+            <div class="lbl">Slide 1 &nbsp;·&nbsp; Project Description</div>
+            <h2>What Is SpendEasy?</h2>
+        </div>
+        <div class="s2-body">
+            <div class="vision-box">
+                <strong>SpendEasy</strong> is a personal finance tracker built around one simple idea:
+                <em>you can't improve what you can't see</em>. Instead of drowning users in complex graphs and synced
+                bank accounts,
+                SpendEasy lets people <strong>manually log what they spend</strong>, see the total at a glance,
+                and spot patterns — all in a clean, distraction-free experience.
+            </div>
+            <div class="features-grid">
+                <div class="feat">
+                    <div class="icon">👁️</div>
+                    <h3>Instant Spending Overview</h3>
+                    <p>See your total outflow the moment you open the app. No hunting through menus — just clarity,
+                        right away.</p>
+                </div>
+                <div class="feat">
+                    <div class="icon">🔒</div>
+                    <h3>Secure Personal Profiles</h3>
+                    <p>Each user has their own private account. Your financial data stays yours — protected and
+                        personal.</p>
+                </div>
+                <div class="feat">
+                    <div class="icon">🗂️</div>
+                    <h3>Category-Based Tracking</h3>
+                    <p>Organize spending by merchant and type. Know exactly where your money goes — groceries,
+                        subscriptions, dining, and more.</p>
+                </div>
+                <div class="feat">
+                    <div class="icon">🌙</div>
+                    <h3>Designed for Real Life</h3>
+                    <p>Dark mode for late-night record-keeping. Works beautifully on desktops and tablets — wherever
+                        life takes you.</p>
+                </div>
+            </div>
+        </div>
+        <div class="strip s2-strip"
+            style="background:#0B1D3A;color:#7C9CBF;font-style:italic;font-size:11px;margin-top:14px;">
+            "A premium experience that makes financial awareness feel effortless."
+        </div>
+    </div>
+
+    <!-- ════════════════ SLIDE 2b – DASHBOARD MOCKUP ════════════════ -->
+    <div class="slide s-dash">
+        <div class="hdr">
+            <div class="lbl">Slide 2 &nbsp;·&nbsp; The Dashboard</div>
+            <h2>What Would You Actually See? — Inside SpendEasy</h2>
+        </div>
+
+        <div class="dash-layout">
+            <!-- Sidebar -->
+            <div class="dash-sidebar">
+                <div class="dash-logo">Spend<span>Easy</span></div>
+                <div class="dash-nav-item active">🏠 &nbsp; Overview</div>
+                <div class="dash-nav-item">📋 &nbsp; Transactions</div>
+                <div class="dash-nav-item">📊 &nbsp; Weekly View</div>
+                <div class="dash-nav-item">📅 &nbsp; Monthly View</div>
+                <div class="dash-nav-item">🗂️ &nbsp; Categories</div>
+                <div class="dash-nav-item">⚙️ &nbsp; Settings</div>
+                <div class="dash-user">👤 &nbsp; Sarah · Logged in</div>
+            </div>
+
+            <!-- Main Dashboard Area -->
+            <div class="dash-main">
+
+                <!-- Stat cards row -->
+                <div class="stat-cards">
+                    <div class="stat">
+                        <div class="stat-label">Total Spent — Feb</div>
+                        <div class="stat-value">$1,284</div>
+                        <div class="stat-sub">↑ 12% from January</div>
+                    </div>
+                    <div class="stat red">
+                        <div class="stat-label">Biggest Expense</div>
+                        <div class="stat-value">$340</div>
+                        <div class="stat-sub">🏠 Rent / Housing</div>
+                    </div>
+                    <div class="stat amber">
+                        <div class="stat-label">Transactions</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-sub">This month</div>
+                    </div>
+                    <div class="stat blue">
+                        <div class="stat-label">Days Tracked</div>
+                        <div class="stat-value">22</div>
+                        <div class="stat-sub">🔥 Streak active</div>
+                    </div>
+                </div>
+
+                <!-- Chart + Category row -->
+                <div class="mid-row">
+                    <div class="chart-box">
+                        <div class="chart-title">Weekly Spending <span class="ctag">This Week ▾</span></div>
+                        <div class="bars">
+                            <div class="bar-col">
+                                <div class="bar low" style="height:28px"></div>
+                                <div class="bar-lbl">Mon</div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar" style="height:44px"></div>
+                                <div class="bar-lbl">Tue</div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar low" style="height:18px"></div>
+                                <div class="bar-lbl">Wed</div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar" style="height:52px"></div>
+                                <div class="bar-lbl">Thu</div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar low" style="height:32px"></div>
+                                <div class="bar-lbl">Fri</div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar" style="height:38px"></div>
+                                <div class="bar-lbl">Sat</div>
+                            </div>
+                            <div class="bar-col">
+                                <div class="bar low" style="height:12px"></div>
+                                <div class="bar-lbl">Sun</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cat-box">
+                        <div class="cat-title">By Category</div>
+                        <div class="cat-item">
+                            <div class="cat-dot" style="background:#EF4444"></div>Housing
+                            <div class="cat-bar-wrap">
+                                <div class="cat-bar-fill" style="width:65%;background:#EF4444"></div>
+                            </div>
+                            <div class="cat-pct">65%</div>
+                        </div>
+                        <div class="cat-item">
+                            <div class="cat-dot" style="background:#F59E0B"></div>Food
+                            <div class="cat-bar-wrap">
+                                <div class="cat-bar-fill" style="width:42%;background:#F59E0B"></div>
+                            </div>
+                            <div class="cat-pct">42%</div>
+                        </div>
+                        <div class="cat-item">
+                            <div class="cat-dot" style="background:#3B82F6"></div>Transport
+                            <div class="cat-bar-wrap">
+                                <div class="cat-bar-fill" style="width:28%;background:#3B82F6"></div>
+                            </div>
+                            <div class="cat-pct">28%</div>
+                        </div>
+                        <div class="cat-item">
+                            <div class="cat-dot" style="background:#22C796"></div>Subs
+                            <div class="cat-bar-wrap">
+                                <div class="cat-bar-fill" style="width:18%;background:#22C796"></div>
+                            </div>
+                            <div class="cat-pct">18%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent transactions -->
+                <div class="tx-box">
+                    <div class="tx-title">Recent Transactions <a href="#">View all →</a></div>
+                    <div class="tx-row">
+                        <div class="tx-ico">☕</div>
+                        <div class="tx-info">
+                            <div class="tx-name">Java House</div>
+                            <div class="tx-date">Feb 22 &nbsp;·&nbsp; <span class="tx-tag">Food</span></div>
+                        </div>
+                        <div class="tx-amt">-$4.50</div>
+                    </div>
+                    <div class="tx-row">
+                        <div class="tx-ico">🛒</div>
+                        <div class="tx-info">
+                            <div class="tx-name">Carrefour</div>
+                            <div class="tx-date">Feb 21 &nbsp;·&nbsp; <span class="tx-tag">Groceries</span></div>
+                        </div>
+                        <div class="tx-amt">-$38.20</div>
+                    </div>
+                    <div class="tx-row">
+                        <div class="tx-ico">📱</div>
+                        <div class="tx-info">
+                            <div class="tx-name">Airtime Top-up</div>
+                            <div class="tx-date">Feb 20 &nbsp;·&nbsp; <span class="tx-tag">Utilities</span></div>
+                        </div>
+                        <div class="tx-amt">-$10.00</div>
+                    </div>
+                    <button class="add-btn">+ Add Transaction</button>
+                </div>
+
+            </div><!-- /dash-main -->
+        </div><!-- /dash-layout -->
+        <div class="strip" style="background:#071526;color:#4B6180;margin-top:10px;">Everything a user needs — at a
+            glance, without complexity.</div>
+    </div>
+
+    <!-- ════════════════════════ SLIDE 3 – PERSONAS ════════════════════ -->
+    <div class="slide s3">
+        <div class="hdr">
+            <div class="lbl">Slide 2 &nbsp;·&nbsp; User Personas</div>
+            <h2>Who Is This Built For?</h2>
+        </div>
+        <div class="personas-row">
+
+            <div class="persona">
+                <div class="persona-head">
+                    <div class="p-avatar">👩‍💼</div>
+                    <div class="p-meta">
+                        <div class="name">Sarah, 24</div>
+                        <div class="tag">"The Budgeting Beginner"</div>
+                    </div>
+                </div>
+                <div class="persona-body">
+                    <div class="p-row"><span class="pl">Who she is</span> Recent graduate, just started her first job.
+                        New to managing her own income.</div>
+                    <div class="p-row"><span class="pl">Her struggle</span> Reaches the end of every month shocked at
+                        how fast her money disappeared — with no idea where it went.</div>
+                    <div class="p-row"><span class="pl">Her frustration</span> Banking apps feel complicated and
+                        overwhelming. She just wants something simple.</div>
+                    <div class="p-row"><span class="pl">Her goal</span> Build a daily tracking habit so she can save
+                        enough for her first car.</div>
+                    <div class="p-row" style="margin-top:8px;"><span
+                            style="background:#22C796;color:#0B1D3A;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700;">SpendEasy
+                            gives her a fresh start — no complexity, no jargon.</span></div>
+                </div>
+            </div>
+
+            <div class="persona">
+                <div class="persona-head">
+                    <div class="p-avatar">👨‍🎨</div>
+                    <div class="p-meta">
+                        <div class="name">David, 35</div>
+                        <div class="tag">"The Conscious Consumer"</div>
+                    </div>
+                </div>
+                <div class="persona-body">
+                    <div class="p-row"><span class="pl">Who he is</span> Freelance designer juggling multiple clients.
+                        No fixed salary — every expense matters.</div>
+                    <div class="p-row"><span class="pl">His struggle</span> Needs to separate business vs. personal
+                        spending, but existing tools slow him down.</div>
+                    <div class="p-row"><span class="pl">His frustration</span> Doesn't want to "sync" his bank every
+                        time he buys a coffee or pays for a tool subscription.</div>
+                    <div class="p-row"><span class="pl">His goal</span> Stay lean, control his monthly runway, and
+                        maintain financial freedom.</div>
+                    <div class="p-row" style="margin-top:8px;"><span
+                            style="background:#22C796;color:#0B1D3A;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700;">SpendEasy
+                            is fast, intentional, and always ready — like him.</span></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="strip" style="background:#0B1D3A;color:#7C9CBF;margin-top:14px;">Two very different people. One
+            shared need: to understand where their money goes.</div>
+    </div>
+
+    <!-- ════════════════════════ SLIDE 4 – USER FLOWS ══════════════════ -->
+    <div class="slide s4">
+        <div class="hdr">
+            <div class="lbl">Slide 3 &nbsp;·&nbsp; User Flows</div>
+            <h2>How Does a User Move Through SpendEasy?</h2>
+        </div>
+        <div class="flows-area">
+
+            <div class="flow-card">
+                <h3>🚦 Flow 1: Getting Started — Onboarding &amp; Login</h3>
+                <div class="flow-steps">
+                    <div class="step-box">Landing Page</div>
+                    <div class="arr">→</div>
+                    <div class="step-box amber">Do you have an account?</div>
+                    <div class="arr">No →</div>
+                    <div class="step-box">Register</div>
+                    <div class="arr">→</div>
+                    <div class="step-box green">Dashboard ✓</div>
+                    &nbsp;&nbsp;
+                    <div class="step-box amber" style="font-size:10px">Yes →</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Login</div>
+                    <div class="arr">→</div>
+                    <div class="step-box green">Dashboard ✓</div>
+                </div>
+            </div>
+
+            <div class="flow-card">
+                <h3>💸 Flow 2: Adding a Transaction — The Core Activity</h3>
+                <div class="flow-steps">
+                    <div class="step-box green">Dashboard</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Click "Add Transaction"</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Fill in Amount, Merchant &amp; Date</div>
+                    <div class="arr">→</div>
+                    <div class="step-box amber">Is data valid?</div>
+                    <div class="arr">No →</div>
+                    <div class="step-box red">Show Error</div>
+                    &nbsp;&nbsp;&nbsp;
+                    <div class="step-box amber" style="font-size:10px">Yes →</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Save Entry</div>
+                    <div class="arr">→</div>
+                    <div class="step-box green">Dashboard Updates ✓</div>
+                </div>
+            </div>
+
+            <div class="flow-card">
+                <h3>📊 Flow 3: Reviewing Financial Health — Getting Insights</h3>
+                <div class="flow-steps">
+                    <div class="step-box green">Dashboard Overview</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Select "Weekly View"</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Review Spending Chart</div>
+                    <div class="arr">→</div>
+                    <div class="step-box">Spot High-Spending Merchant</div>
+                    <div class="arr">→</div>
+                    <div class="step-box green">Adjust Future Budget ✓</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="strip" style="background:#0B1D3A;color:#7C9CBF;margin-top:14px;">Every flow is designed to be fast,
+            clear, and never confusing.</div>
+    </div>
+
+    <!-- ════════════════════════ SLIDE 5 – IMPACT ══════════════════════ -->
+    <div class="slide s5">
+        <div class="s5-accent"></div>
+        <div class="s5-body">
+            <div class="s5-hdr">
+                <div
+                    style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#22C796;margin-bottom:8px;">
+                    Slide 4 &nbsp;·&nbsp; The Impact</div>
+                <h2>What Does SpendEasy<br>Change for People?</h2>
+            </div>
+            <div class="impact-grid">
+                <div class="icard">
+                    <div class="itop"><span class="iico">💡</span><span class="ititle">No more "where did it all
+                            go?"</span></div>
+                    <div class="ibody">For the first time, users see a clear picture of their spending — instantly,
+                        without digging through bank statements or complex dashboards.</div>
+                </div>
+                <div class="icard">
+                    <div class="itop"><span class="iico">🧠</span><span class="ititle">Builds better money habits</span>
+                    </div>
+                    <div class="ibody">Manually entering each transaction makes spending feel intentional. Users think
+                        twice before spending — and that awareness is powerful.</div>
+                </div>
+                <div class="icard">
+                    <div class="itop"><span class="iico">🎯</span><span class="ititle">Goals become reachable</span>
+                    </div>
+                    <div class="ibody">Whether it's saving for a car or cutting unnecessary subscriptions, SpendEasy
+                        turns vague goals into clear, trackable progress.</div>
+                </div>
+                <div class="icard">
+                    <div class="itop"><span class="iico">🚀</span><span class="ititle">Designed responsibly — for
+                            everyone</span></div>
+                    <div class="ibody">From a 24-year-old beginner to a 35-year-old freelancer — SpendEasy was built
+                        around real people, real frustrations, and real daily life.</div>
+                </div>
+            </div>
+        </div>
+        <div class="strip">Clarity &nbsp;·&nbsp; Intentionality &nbsp;·&nbsp; Simplicity</div>
+    </div>
+
+</body>
+
+</html>

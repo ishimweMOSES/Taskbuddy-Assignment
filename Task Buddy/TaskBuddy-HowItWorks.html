@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskBuddy – How It All Works</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8f9fa;
+      color: #1a202c;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; font-size: 12px; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    /* ── LAYOUT ── */
+    .wrapper { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+    /* ── COVER ── */
+    .cover {
+      background: linear-gradient(135deg, #0E1F3D 0%, #1a3a6b 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 60px 48px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: rgba(255,105,0,0.15);
+    }
+    .cover-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #FF6900;
+      margin-bottom: 12px;
+    }
+    .cover h1 { font-size: 38px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .cover p { font-size: 16px; color: #8FA8CC; max-width: 480px; }
+    .cover-badge {
+      display: inline-block;
+      margin-top: 24px;
+      background: rgba(255,105,0,0.15);
+      border: 1px solid rgba(255,105,0,0.4);
+      color: #FF6900;
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 40px; }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #FF6900;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+    h2 { font-size: 22px; font-weight: 700; color: #0E1F3D; margin-bottom: 14px; }
+    h3 { font-size: 16px; font-weight: 700; color: #0E1F3D; margin: 20px 0 8px; }
+    p { margin-bottom: 10px; color: #4a5568; }
+
+    /* ── CARD ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+
+    /* ── CODE ── */
+    pre {
+      background: #0E1F3D;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 12px 0 16px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+    code { font-family: 'Fira Code', monospace; }
+    .inline-code {
+      background: #edf2f7;
+      color: #c53030;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12.5px;
+    }
+
+    /* syntax colours */
+    .kw  { color: #FF6900; }   /* keyword */
+    .fn  { color: #63b3ed; }   /* function */
+    .str { color: #68d391; }   /* string */
+    .cmt { color: #718096; font-style: italic; } /* comment */
+    .var { color: #fefcbf; }   /* variable */
+    .type{ color: #a78bfa; }   /* type/class */
+
+    /* ── FLOW DIAGRAM ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .flow-box {
+      background: #0E1F3D;
+      color: white;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .flow-box.orange { background: #FF6900; }
+    .flow-box.blue   { background: #3C67EA; }
+    .flow-box.green  { background: #00A86B; }
+    .flow-arrow {
+      font-size: 18px;
+      color: #FF6900;
+      padding: 0 6px;
+      font-weight: 700;
+    }
+
+    /* ── FILE TREE ── */
+    .tree {
+      background: #0E1F3D;
+      color: #8FA8CC;
+      border-radius: 10px;
+      padding: 18px 24px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      line-height: 2;
+    }
+    .tree .folder { color: #63b3ed; font-weight: 700; }
+    .tree .file   { color: #e2e8f0; }
+    .tree .highlight { color: #FF6900; font-weight: 700; }
+    .tree .note   { color: #718096; }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th { background: #0E1F3D; color: white; padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 10px 14px; border-bottom: 1px solid #EDF2F7; font-size: 13px; }
+    tr:nth-child(even) td { background: #f7fafc; }
+
+    /* ── STEP BADGE ── */
+    .step-row { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
+    .step-num {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      background: #FF6900;
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .step-content { flex: 1; }
+    .step-content strong { display: block; font-size: 14px; font-weight: 700; color: #0E1F3D; }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-left: 4px solid #FF6900;
+      background: #fff8f3;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 13px;
+      color: #744210;
+    }
+    .callout-blue {
+      border-left-color: #3C67EA;
+      background: #ebf4ff;
+      color: #2c5282;
+    }
+    .callout-green {
+      border-left-color: #00A86B;
+      background: #f0fff4;
+      color: #276749;
+    }
+
+    /* ── PRINT BUTTON ── */
+    .print-btn {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: #FF6900;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255,105,0,0.4);
+      font-family: 'Inter', sans-serif;
+      z-index: 100;
+    }
+    .print-btn:hover { background: #e05900; }
+
+    /* ── TOC ── */
+    .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .toc-item {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-num {
+      background: #0E1F3D;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF</button>
+
+<div class="wrapper">
+
+  <!-- ══════════════════════════════════════════════ COVER -->
+  <div class="cover">
+    <div class="cover-label">Study Guide · Vue 3 App</div>
+    <h1>TaskBuddy<br/>How It All Works</h1>
+    <p>A clear, code-first explanation of every important file — routing, stores, views, and components — and exactly how they connect.</p>
+    <div class="cover-badge">📁 7 Key Files · 🔗 Vue Router · 🗄️ Pinia Store</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ TABLE OF CONTENTS -->
+  <div class="card">
+    <div class="section-title">Contents</div>
+    <h2>What You'll Learn</h2>
+    <div class="toc">
+      <div class="toc-item"><span class="toc-num">1</span> The Big Picture – How Files Connect</div>
+      <div class="toc-item"><span class="toc-num">2</span> main.js – The App Entry Point</div>
+      <div class="toc-item"><span class="toc-num">3</span> App.vue – The Root Shell</div>
+      <div class="toc-item"><span class="toc-num">4</span> Router – URL Routing</div>
+      <div class="toc-item"><span class="toc-num">5</span> Auth Store – Login State</div>
+      <div class="toc-item"><span class="toc-num">6</span> Tasks Store – Task Data</div>
+      <div class="toc-item"><span class="toc-num">7</span> DashboardView – Main Page</div>
+      <div class="toc-item"><span class="toc-num">8</span> TaskCard Component</div>
+      <div class="toc-item"><span class="toc-num">9</span> CreateTaskModal</div>
+      <div class="toc-item"><span class="toc-num">10</span> Complete Request Flow</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 1 -->
+  <div class="section">
+    <div class="section-title">Section 1</div>
+    <h2>The Big Picture — How Files Connect</h2>
+
+    <div class="card">
+      <p>Think of the app as a <strong>chain</strong>. Each file has one job, and they pass data or control to each other:</p>
+
+      <div class="flow">
+        <div class="flow-box">Browser visits<br/><em>localhost:5173</em></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box orange">main.js<br/><em>starts app</em></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box blue">App.vue<br/><em>root shell</em></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Router<br/><em>reads URL</em></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box green">View<br/><em>renders page</em></div>
+      </div>
+
+      <p style="margin-top:14px;">The <strong>Stores (Pinia)</strong> sit alongside every step, holding shared data (the logged-in user, the list of tasks) that any view can read or write.</p>
+
+      <h3>📁 File Structure</h3>
+      <div class="tree">
+        <span class="folder">src/</span><br/>
+        &nbsp;&nbsp;<span class="highlight">main.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← #1 – starts everything</span><br/>
+        &nbsp;&nbsp;<span class="highlight">App.vue</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← #2 – root layout</span><br/>
+        &nbsp;&nbsp;<span class="folder">router/</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">index.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← #3 – URL → Component map</span><br/>
+        &nbsp;&nbsp;<span class="folder">stores/</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← #4 – login/logout state</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">tasks.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← #5 – task list state</span><br/>
+        &nbsp;&nbsp;<span class="folder">views/</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">LoginView.vue</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← login page</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">DashboardView.vue</span>&nbsp; <span class="note">← #6 – main dashboard</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">TodoView.vue</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">InProgressView.vue</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">CompletedView.vue</span><br/>
+        &nbsp;&nbsp;<span class="folder">components/</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="folder">tasks/</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">TaskCard.vue</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="note">← #7 – one task card</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="folder">ui/</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">CreateTaskModal.vue</span> <span class="note">← #8 – new task popup</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">DarkModeToggle.vue</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 2 -->
+  <div class="page-break"></div>
+  <div class="section">
+    <div class="section-title">Section 2</div>
+    <h2>main.js — The App Entry Point</h2>
+
+    <div class="card">
+      <p>This is the <strong>first file that runs</strong>. Its only job is to create the Vue app and plug in the two plugins: <strong>Pinia</strong> (stores) and <strong>Vue Router</strong> (navigation). Then it attaches the whole app to the <span class="inline-code">&lt;div id="app"&gt;</span> in <span class="inline-code">index.html</span>.</p>
+
+      <pre><span class="cmt">// src/main.js</span>
+<span class="kw">import</span> { createApp } <span class="kw">from</span> <span class="str">'vue'</span>
+<span class="kw">import</span> App          <span class="kw">from</span> <span class="str">'./App.vue'</span>
+<span class="kw">import</span> router       <span class="kw">from</span> <span class="str">'./router'</span>       <span class="cmt">// our route map</span>
+<span class="kw">import</span> { createPinia } <span class="kw">from</span> <span class="str">'pinia'</span>       <span class="cmt">// state manager</span>
+
+<span class="kw">const</span> <span class="var">app</span> = createApp(App)   <span class="cmt">// 1. create the Vue app</span>
+
+app.use(createPinia())        <span class="cmt">// 2. plug in Pinia (stores)</span>
+app.use(router)               <span class="cmt">// 3. plug in Vue Router</span>
+
+app.mount(<span class="str">'#app'</span>)           <span class="cmt">// 4. attach to index.html's &lt;div id="app"&gt;</span></pre>
+
+      <div class="callout">
+        <strong>🎯 Key point:</strong> <code>app.use(router)</code> is what makes <span class="inline-code">&lt;RouterView /&gt;</span> and <span class="inline-code">&lt;RouterLink /&gt;</span> work everywhere. Without this line, navigation would break entirely.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 3 -->
+  <div class="section">
+    <div class="section-title">Section 3</div>
+    <h2>App.vue — The Root Shell</h2>
+
+    <div class="card">
+      <p><span class="inline-code">App.vue</span> is the <strong>outer container</strong> that wraps the entire app. It does two things:</p>
+      <ul style="margin-left:20px; margin-bottom:12px; color:#4a5568;">
+        <li>Restores the dark/light mode preference from the browser when the app loads</li>
+        <li>Renders <span class="inline-code">&lt;RouterView /&gt;</span> — a slot that Vue Router fills with the correct page component based on the current URL</li>
+      </ul>
+
+      <pre><span class="cmt">// src/App.vue</span>
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">import</span> { onMounted } <span class="kw">from</span> <span class="str">'vue'</span>
+
+onMounted(() => {
+  <span class="cmt">// When app loads, check saved theme preference</span>
+  <span class="kw">const</span> <span class="var">saved</span> = localStorage.getItem(<span class="str">'task-buddy-theme'</span>)
+  <span class="kw">if</span> (saved === <span class="str">'dark'</span>) {
+    document.documentElement.classList.add(<span class="str">'dark'</span>)   <span class="cmt">// enable dark mode</span>
+  }
+})
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="kw">&lt;template&gt;</span>
+  <span class="cmt">&lt;!-- RouterView fills in with: LoginView, DashboardView, etc --&gt;</span>
+  <span class="fn">&lt;RouterView /&gt;</span>
+<span class="kw">&lt;/template&gt;</span></pre>
+
+      <div class="callout callout-blue">
+        <strong>💡 Think of it this way:</strong> App.vue is like a picture frame. The frame never changes — but the RouterView inside it swaps in different "pictures" (pages) as you navigate.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 4 -->
+  <div class="page-break"></div>
+  <div class="section">
+    <div class="section-title">Section 4</div>
+    <h2>router/index.js — URL Routing</h2>
+
+    <div class="card">
+      <p>The router is a <strong>map of URLs to components</strong>. When the user visits a URL, the router finds the matching component and tells <span class="inline-code">&lt;RouterView /&gt;</span> to display it.</p>
+
+      <pre><span class="cmt">// src/router/index.js</span>
+<span class="kw">import</span> { createRouter, createWebHistory } <span class="kw">from</span> <span class="str">'vue-router'</span>
+<span class="kw">import</span> { useAuthStore } <span class="kw">from</span> <span class="str">'../stores/auth'</span>
+
+<span class="cmt">// Import each page component</span>
+<span class="kw">import</span> DashboardView   <span class="kw">from</span> <span class="str">'../views/DashboardView.vue'</span>
+<span class="kw">import</span> LoginView       <span class="kw">from</span> <span class="str">'../views/LoginView.vue'</span>
+<span class="kw">import</span> TodoView        <span class="kw">from</span> <span class="str">'../views/TodoView.vue'</span>
+<span class="kw">import</span> CompletedView   <span class="kw">from</span> <span class="str">'../views/CompletedView.vue'</span>
+
+<span class="kw">const</span> <span class="var">routes</span> = [
+  { path: <span class="str">'/'</span>,                   redirect: <span class="str">'/dashboard'</span> },
+  { path: <span class="str">'/login'</span>,             component: LoginView },
+  { path: <span class="str">'/dashboard'</span>,         component: DashboardView,
+    meta: { requiresAuth: <span class="kw">true</span> } },   <span class="cmt">// ← protected!</span>
+  { path: <span class="str">'/dashboard/todo'</span>,    component: TodoView,
+    meta: { requiresAuth: <span class="kw">true</span> } },
+  { path: <span class="str">'/dashboard/done'</span>,    component: CompletedView,
+    meta: { requiresAuth: <span class="kw">true</span> } },
+]
+
+<span class="kw">const</span> <span class="var">router</span> = createRouter({
+  history: createWebHistory(),  <span class="cmt">// clean URLs (no # symbol)</span>
+  routes,
+})
+
+<span class="cmt">// 🔒 Route Guard – runs before EVERY navigation</span>
+router.beforeEach((to) => {
+  <span class="kw">const</span> <span class="var">authStore</span> = useAuthStore()
+
+  <span class="cmt">// If page needs login AND user isn't logged in → redirect to /login</span>
+  <span class="kw">if</span> (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    <span class="kw">return</span> { name: <span class="str">'Login'</span> }
+  }
+  <span class="cmt">// Otherwise: let navigation happen</span>
+})
+
+<span class="kw">export default</span> router</pre>
+
+      <h3>Route Table</h3>
+      <table>
+        <thead><tr><th>URL</th><th>Component Shown</th><th>Protected?</th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td>Redirects to <code>/dashboard</code></td><td>—</td></tr>
+          <tr><td><code>/login</code></td><td>LoginView.vue</td><td>No</td></tr>
+          <tr><td><code>/register</code></td><td>RegisterView.vue</td><td>No</td></tr>
+          <tr><td><code>/dashboard</code></td><td>DashboardView.vue</td><td>✅ Yes</td></tr>
+          <tr><td><code>/dashboard/todo</code></td><td>TodoView.vue</td><td>✅ Yes</td></tr>
+          <tr><td><code>/dashboard/inprogress</code></td><td>InProgressView.vue</td><td>✅ Yes</td></tr>
+          <tr><td><code>/dashboard/done</code></td><td>CompletedView.vue</td><td>✅ Yes</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>🔒 Route Guard explained:</strong> <code>router.beforeEach</code> is a security checkpoint. Before any page is shown, it checks: "Does this route have <code>requiresAuth: true</code>? And is the user logged in?" If not — bounce them to the login page. This prevents someone typing <code>/dashboard</code> in the address bar and bypassing the login.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 5 -->
+  <div class="page-break"></div>
+  <div class="section">
+    <div class="section-title">Section 5</div>
+    <h2>stores/auth.js — Login State (Pinia Store)</h2>
+
+    <div class="card">
+      <p>A <strong>Pinia store</strong> is a place to keep data that <em>multiple components need to share</em>. The auth store holds who is currently logged in. Any view can read the user's name, check if they're logged in, or call login/logout.</p>
+
+      <pre><span class="cmt">// src/stores/auth.js</span>
+<span class="kw">import</span> { ref, computed } <span class="kw">from</span> <span class="str">'vue'</span>
+<span class="kw">import</span> { defineStore }  <span class="kw">from</span> <span class="str">'pinia'</span>
+
+<span class="kw">export const</span> <span class="var">useAuthStore</span> = defineStore(<span class="str">'auth'</span>, () => {
+
+  <span class="cmt">// STATE – the logged-in user (null if nobody is logged in)</span>
+  <span class="kw">const</span> <span class="var">user</span> = ref(
+    JSON.parse(localStorage.getItem(<span class="str">'flowtask_current_user'</span>)) || <span class="kw">null</span>
+  )
+
+  <span class="cmt">// COMPUTED – true if someone is logged in</span>
+  <span class="kw">const</span> <span class="var">isAuthenticated</span> = computed(() => <span class="kw">!!</span>user.value)
+
+  <span class="cmt">// ACTION – login: find user in localStorage, return true/false</span>
+  <span class="kw">function</span> <span class="fn">login</span>(email, password) {
+    <span class="kw">const</span> <span class="var">users</span> = JSON.parse(localStorage.getItem(<span class="str">'flowtask_users'</span>) || <span class="str">'[]'</span>)
+    <span class="kw">const</span> <span class="var">found</span> = users.find(<span class="var">u</span> => u.email === email &amp;&amp; u.password === password)
+    <span class="kw">if</span> (found) {
+      user.value = found
+      localStorage.setItem(<span class="str">'flowtask_current_user'</span>, JSON.stringify(found))
+      <span class="kw">return true</span>   <span class="cmt">// success</span>
+    }
+    <span class="kw">return false</span>     <span class="cmt">// wrong credentials</span>
+  }
+
+  <span class="cmt">// ACTION – logout: clear user data</span>
+  <span class="kw">function</span> <span class="fn">logout</span>() {
+    user.value = <span class="kw">null</span>
+    localStorage.removeItem(<span class="str">'flowtask_current_user'</span>)
+  }
+
+  <span class="kw">return</span> { user, isAuthenticated, login, logout }
+})</pre>
+
+      <div class="callout callout-green">
+        <strong>✅ How it connects:</strong><br/>
+        • <strong>LoginView.vue</strong> calls <code>authStore.login(email, password)</code><br/>
+        • <strong>router/index.js</strong> checks <code>authStore.isAuthenticated</code> in the guard<br/>
+        • <strong>DashboardView.vue</strong> reads <code>authStore.user.username</code> to show the name<br/>
+        • Any view calls <code>authStore.logout()</code> when the user clicks "Sign out"
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 6 -->
+  <div class="section">
+    <div class="section-title">Section 6</div>
+    <h2>stores/tasks.js — Task Data (Pinia Store)</h2>
+
+    <div class="card">
+      <p>This store holds the <strong>array of all tasks</strong>. Every view that shows tasks reads from here. When a task is added, deleted, or its status changed — all views update automatically because they share the same reactive data.</p>
+
+      <pre><span class="cmt">// src/stores/tasks.js</span>
+<span class="kw">export const</span> <span class="var">useTasksStore</span> = defineStore(<span class="str">'tasks'</span>, () => {
+
+  <span class="cmt">// STATE – the task array (pre-loaded with demo tasks)</span>
+  <span class="kw">const</span> <span class="var">tasks</span> = ref([ ... ])    <span class="cmt">// array of task objects</span>
+
+  <span class="cmt">// ACTION – add a brand-new task</span>
+  <span class="kw">function</span> <span class="fn">addTask</span>(task) {
+    tasks.value.push({
+      id: Date.now(),           <span class="cmt">// unique ID using timestamp</span>
+      title:       task.title,
+      description: task.description,
+      priority:    task.priority,   <span class="cmt">// 'low' | 'medium' | 'high'</span>
+      dueDate:     task.dueDate,
+      category:    task.category,
+      status:      <span class="str">'todo'</span>,         <span class="cmt">// always starts as To Do</span>
+    })
+  }
+
+  <span class="cmt">// ACTION – change a task's status (todo / inprogress / done)</span>
+  <span class="kw">function</span> <span class="fn">updateStatus</span>(id, newStatus) {
+    <span class="kw">const</span> <span class="var">task</span> = tasks.value.find(t => t.id === id)
+    <span class="kw">if</span> (task) task.status = newStatus
+  }
+
+  <span class="cmt">// ACTION – permanently remove a task by its ID</span>
+  <span class="kw">function</span> <span class="fn">deleteTask</span>(id) {
+    tasks.value = tasks.value.filter(t => t.id !== id)
+  }
+
+  <span class="kw">return</span> { tasks, addTask, updateStatus, deleteTask }
+})</pre>
+
+      <h3>Task Object Structure</h3>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>Number</td><td><code>1708600000000</code> (timestamp)</td></tr>
+          <tr><td><code>title</code></td><td>String</td><td>"Design landing page"</td></tr>
+          <tr><td><code>description</code></td><td>String</td><td>"Use Figma for wireframes"</td></tr>
+          <tr><td><code>priority</code></td><td>String</td><td>"low" | "medium" | "high"</td></tr>
+          <tr><td><code>dueDate</code></td><td>String</td><td>"2026-02-28"</td></tr>
+          <tr><td><code>category</code></td><td>String</td><td>"Study", "Work"</td></tr>
+          <tr><td><code>status</code></td><td>String</td><td>"todo" | "inprogress" | "done"</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 7 -->
+  <div class="page-break"></div>
+  <div class="section">
+    <div class="section-title">Section 7</div>
+    <h2>DashboardView.vue — The Main Page</h2>
+
+    <div class="card">
+      <p>This is the most important view. It connects <strong>everything together</strong>: it reads from both stores, shows stats, renders the sidebar navigation, lists tasks using the TaskCard component, and opens the CreateTaskModal.</p>
+
+      <h3>The Script — What it imports and calculates</h3>
+      <pre><span class="cmt">// src/views/DashboardView.vue — &lt;script setup&gt;</span>
+
+<span class="cmt">// 1. Import Vue helpers</span>
+<span class="kw">import</span> { ref, computed }   <span class="kw">from</span> <span class="str">'vue'</span>
+<span class="kw">import</span> { useRouter, useRoute } <span class="kw">from</span> <span class="str">'vue-router'</span>
+
+<span class="cmt">// 2. Import both stores</span>
+<span class="kw">import</span> { useTasksStore } <span class="kw">from</span> <span class="str">'../stores/tasks'</span>
+<span class="kw">import</span> { useAuthStore }  <span class="kw">from</span> <span class="str">'../stores/auth'</span>
+
+<span class="cmt">// 3. Import child components</span>
+<span class="kw">import</span> TaskCard          <span class="kw">from</span> <span class="str">'../components/tasks/TaskCard.vue'</span>
+<span class="kw">import</span> CreateTaskModal   <span class="kw">from</span> <span class="str">'../components/ui/CreateTaskModal.vue'</span>
+
+<span class="cmt">// 4. Use the stores (this connects to the shared data)</span>
+<span class="kw">const</span> <span class="var">tasksStore</span> = useTasksStore()
+<span class="kw">const</span> <span class="var">authStore</span>  = useAuthStore()
+<span class="kw">const</span> <span class="var">router</span>     = useRouter()
+<span class="kw">const</span> <span class="var">route</span>      = useRoute()   <span class="cmt">// tells us the current URL path</span>
+
+<span class="cmt">// 5. Local state – show/hide the modal</span>
+<span class="kw">const</span> <span class="var">showModal</span> = ref(<span class="kw">false</span>)
+
+<span class="cmt">// 6. Statistics – auto-calculated from the task list</span>
+<span class="kw">const</span> <span class="var">today</span> = <span class="kw">new</span> Date().toISOString().slice(0, 10)   <span class="cmt">// "2026-02-22"</span>
+
+<span class="kw">const</span> <span class="var">todaysTasks</span> = computed(() =>
+  tasksStore.tasks.filter(t => t.dueDate === today).length
+)
+<span class="kw">const</span> <span class="var">completionPercent</span> = computed(() => {
+  <span class="kw">if</span> (tasksStore.tasks.length === 0) <span class="kw">return</span> 0
+  <span class="kw">const</span> <span class="var">done</span> = tasksStore.tasks.filter(t => t.status === <span class="str">'done'</span>).length
+  <span class="kw">return</span> Math.round((done / tasksStore.tasks.length) * 100)
+})</pre>
+
+      <h3>The Template — What it renders</h3>
+      <pre><span class="cmt">&lt;!-- src/views/DashboardView.vue — &lt;template&gt; --&gt;</span>
+&lt;<span class="fn">template</span>&gt;
+  &lt;div class=<span class="str">"flex min-h-screen"</span>&gt;
+
+    <span class="cmt">&lt;!-- ── SIDEBAR ────────────────────────────── --&gt;</span>
+    &lt;<span class="fn">aside</span>&gt;
+      &lt;<span class="fn">span</span>&gt;TaskBuddy&lt;/<span class="fn">span</span>&gt;
+
+      &lt;<span class="fn">nav</span>&gt;
+        <span class="cmt">&lt;!-- Loop over navLinks array to build the nav --&gt;</span>
+        &lt;<span class="fn">router-link</span>
+          v-for=<span class="str">"link in navLinks"</span>
+          :to=<span class="str">"link.to"</span>
+          <span class="cmt">&lt;!-- Active styling if URL matches --&gt;</span>
+          :class=<span class="str">"route.path === link.to ? 'active-style' : 'normal-style'"</span>
+        &gt;
+          {{ link.label }}
+        &lt;/<span class="fn">router-link</span>&gt;
+      &lt;/<span class="fn">nav</span>&gt;
+
+      &lt;<span class="fn">button</span> @click=<span class="str">"logout"</span>&gt;Sign out&lt;/<span class="fn">button</span>&gt;
+    &lt;/<span class="fn">aside</span>&gt;
+
+    <span class="cmt">&lt;!-- ── MAIN AREA ──────────────────────────── --&gt;</span>
+    &lt;<span class="fn">main</span>&gt;
+      <span class="cmt">&lt;!-- Stats cards --&gt;</span>
+      &lt;<span class="fn">div</span>&gt;Today: {{ todaysTasks }}&lt;/<span class="fn">div</span>&gt;
+      &lt;<span class="fn">div</span>&gt;Completion: {{ completionPercent }}%&lt;/<span class="fn">div</span>&gt;
+
+      <span class="cmt">&lt;!-- Create Task button (toggles modal) --&gt;</span>
+      &lt;<span class="fn">button</span> @click=<span class="str">"showModal = true"</span>&gt;+ Create Task&lt;/<span class="fn">button</span>&gt;
+
+      <span class="cmt">&lt;!-- Task grid – one TaskCard per task --&gt;</span>
+      &lt;<span class="fn">TaskCard</span>
+        v-for=<span class="str">"task in tasksStore.tasks"</span>
+        :key=<span class="str">"task.id"</span>
+        :task=<span class="str">"task"</span>
+        @status-change=<span class="str">"handleStatusChange"</span>
+      /&gt;
+    &lt;/<span class="fn">main</span>&gt;
+
+    <span class="cmt">&lt;!-- Modal only shows when showModal is true --&gt;</span>
+    &lt;<span class="fn">CreateTaskModal</span> v-if=<span class="str">"showModal"</span> @close=<span class="str">"showModal = false"</span> /&gt;
+
+  &lt;/<span class="fn">div</span>&gt;
+&lt;/<span class="fn">template</span>&gt;</pre>
+
+      <div class="callout">
+        <strong>🎯 Key concept — v-for:</strong> <code>v-for="task in tasksStore.tasks"</code> loops through every task in the store and creates one <code>&lt;TaskCard&gt;</code> for each one. When you add or delete a task from the store, Vue automatically re-renders the list.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 8 -->
+  <div class="page-break"></div>
+  <div class="section">
+    <div class="section-title">Section 8</div>
+    <h2>TaskCard.vue — One Task Card</h2>
+
+    <div class="card">
+      <p>TaskCard is a <strong>reusable component</strong>. It receives one task as a <em>prop</em> (input data), displays it, and can emit (send back) events when the user changes the status or clicks delete.</p>
+
+      <pre><span class="cmt">// src/components/tasks/TaskCard.vue</span>
+<span class="kw">&lt;script setup&gt;</span>
+
+<span class="cmt">// PROPS – data passed IN from the parent (DashboardView)</span>
+<span class="kw">const</span> <span class="var">props</span> = defineProps({
+  task:       { type: Object,  required: <span class="kw">true</span>  },  <span class="cmt">// the task to show</span>
+  showDelete: { type: Boolean, default:  <span class="kw">false</span> },  <span class="cmt">// show delete button?</span>
+})
+
+<span class="cmt">// EMITS – events sent back OUT to the parent</span>
+<span class="kw">const</span> <span class="var">emit</span> = defineEmits([
+  <span class="str">'status-change'</span>,   <span class="cmt">// fired when user changes status dropdown</span>
+  <span class="str">'delete'</span>,          <span class="cmt">// fired when user clicks Delete</span>
+  <span class="str">'share'</span>,           <span class="cmt">// fired on double-click</span>
+])
+
+<span class="cmt">// Computed – is this task overdue?</span>
+<span class="kw">const</span> <span class="var">isOverdue</span> = computed(() => {
+  <span class="kw">const</span> <span class="var">today</span> = <span class="kw">new</span> Date()
+  today.setHours(0, 0, 0, 0)
+  <span class="kw">return</span> <span class="kw">new</span> Date(props.task.dueDate) &lt; today &amp;&amp; props.task.status !== <span class="str">'done'</span>
+})
+
+<span class="cmt">// When status dropdown changes, tell the parent</span>
+<span class="kw">function</span> <span class="fn">onStatusChange</span>(event) {
+  emit(<span class="str">'status-change'</span>, { id: props.task.id, status: event.target.value })
+}
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- Template shows: priority badge, title, description, due date,
+     status dropdown, and optional delete button --&gt;</span></pre>
+
+      <h3>Props vs Emits — the two-way conversation</h3>
+      <div class="flow" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="flow-box blue" style="width:140px;">DashboardView</div>
+          <div class="flow-arrow">──── :task="task" ────▶</div>
+          <div class="flow-box" style="width:120px;">TaskCard</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="flow-box blue" style="width:140px;">DashboardView</div>
+          <div class="flow-arrow">◀── @status-change ────</div>
+          <div class="flow-box" style="width:120px;">TaskCard</div>
+        </div>
+      </div>
+      <div class="callout callout-blue" style="margin-top:14px;">
+        <strong>💡 Rule:</strong> Data flows <em>down</em> via props. Events flow <em>up</em> via emits. The parent (Dashboard) is always in control of the actual data — TaskCard just displays it and reports user actions.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 9 -->
+  <div class="section">
+    <div class="section-title">Section 9</div>
+    <h2>CreateTaskModal.vue — The "New Task" Popup</h2>
+
+    <div class="card">
+      <p>This component appears as an <strong>overlay popup</strong> when you click "+ Create Task". It collects task details from the user, then calls <span class="inline-code">tasksStore.addTask()</span> directly to save the task.</p>
+
+      <pre><span class="cmt">// src/components/ui/CreateTaskModal.vue</span>
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">import</span> { useTasksStore } <span class="kw">from</span> <span class="str">'../../stores/tasks'</span>
+
+<span class="kw">const</span> <span class="var">emit</span>       = defineEmits([<span class="str">'close'</span>])   <span class="cmt">// tells parent to hide modal</span>
+<span class="kw">const</span> <span class="var">tasksStore</span> = useTasksStore()
+
+<span class="cmt">// Local state for the form fields</span>
+<span class="kw">const</span> <span class="var">title</span>    = ref(<span class="str">''</span>)
+<span class="kw">const</span> <span class="var">priority</span> = ref(<span class="str">'medium'</span>)
+<span class="kw">const</span> <span class="var">dueDate</span>  = ref(<span class="str">''</span>)
+<span class="kw">const</span> <span class="var">category</span> = ref(<span class="str">''</span>)
+
+<span class="kw">function</span> <span class="fn">handleCreate</span>() {
+  <span class="kw">if</span> (!title.value.trim()) <span class="kw">return</span>   <span class="cmt">// don't save empty tasks</span>
+
+  <span class="cmt">// Save the task directly to the Pinia store</span>
+  tasksStore.addTask({
+    title:    title.value,
+    priority: priority.value,
+    dueDate:  dueDate.value,
+    category: category.value,
+  })
+
+  emit(<span class="str">'close'</span>)   <span class="cmt">// tell DashboardView to hide the modal</span>
+}
+<span class="kw">&lt;/script&gt;</span></pre>
+
+      <div class="callout callout-green">
+        <strong>✅ Flow:</strong> User fills form → clicks "Create Task" → <code>handleCreate()</code> runs → calls <code>tasksStore.addTask()</code> → new task appears in store → <code>DashboardView</code>'s <code>v-for</code> loop automatically renders the new card → modal closes.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SECTION 10 -->
+  <div class="page-break"></div>
+  <div class="section">
+    <div class="section-title">Section 10</div>
+    <h2>Complete Request Flow — Start to Finish</h2>
+
+    <div class="card">
+      <p>Here are the most common user journeys and exactly what happens in the code at each step.</p>
+
+      <h3>🔑 Flow 1: User Logs In</h3>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>User visits / or /dashboard</strong>
+          Router's <code>beforeEach</code> guard fires. Checks <code>authStore.isAuthenticated</code> → it's <code>false</code> → redirects to <code>/login</code>.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>LoginView.vue renders</strong>
+          User types email + password into the form and presses "Sign In" → <code>handleLogin()</code> runs.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>authStore.login(email, password) is called</strong>
+          Looks up the user in <code>localStorage</code>. If found → sets <code>user.value</code> and saves to localStorage → returns <code>true</code>.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>router.push('/dashboard') is called</strong>
+          Guard checks again → <code>isAuthenticated</code> is now <code>true</code> → allows navigation → <code>DashboardView</code> renders.
+        </div>
+      </div>
+
+      <h3 style="margin-top:24px;">➕ Flow 2: User Creates a Task</h3>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>User clicks "+ Create Task" in DashboardView</strong>
+          <code>showModal = true</code> → <code>v-if="showModal"</code> makes <code>&lt;CreateTaskModal&gt;</code> appear.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>User fills form, clicks "Create Task"</strong>
+          <code>handleCreate()</code> in <code>CreateTaskModal</code> runs → calls <code>tasksStore.addTask({...})</code>.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Store adds the task</strong>
+          <code>tasks.value.push({id: Date.now(), status: 'todo', ...})</code>. Since <code>tasks</code> is reactive, every component watching it updates instantly.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Modal emits 'close'</strong>
+          <code>emit('close')</code> → parent <code>DashboardView</code> sets <code>showModal = false</code> → modal disappears. New task card is already visible.
+        </div>
+      </div>
+
+      <h3 style="margin-top:24px;">🗑️ Flow 3: User Deletes from Completed</h3>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>User clicks "Delete" in CompletedView</strong>
+          <code>TaskCard</code> emits <code>'delete'</code> with the task's id → <code>CompletedView</code>'s <code>handleDelete(id)</code> handler fires.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>tasksStore.deleteTask(id) is called</strong>
+          <code>tasks.value = tasks.value.filter(t => t.id !== id)</code> — removes the task from the shared array.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>All views update automatically</strong>
+          Because all views read from the same <code>tasksStore.tasks</code> reactive array, the task disappears from Dashboard, Completed, and everywhere else instantly — no extra code needed.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ SUMMARY -->
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <h2>Quick Reference Cheat Sheet</h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>File</th><th>Job</th><th>Talks To</th></tr></thead>
+        <tbody>
+          <tr><td><code>main.js</code></td><td>Start the app, plug in plugins</td><td>App.vue, router, pinia</td></tr>
+          <tr><td><code>App.vue</code></td><td>Root shell, restore theme</td><td>RouterView (all views)</td></tr>
+          <tr><td><code>router/index.js</code></td><td>URL → Component map + guard</td><td>auth store, all views</td></tr>
+          <tr><td><code>stores/auth.js</code></td><td>Who is logged in</td><td>LoginView, router, Dashboard</td></tr>
+          <tr><td><code>stores/tasks.js</code></td><td>The list of all tasks</td><td>Dashboard, Todo, Completed, Modal</td></tr>
+          <tr><td><code>DashboardView.vue</code></td><td>Main page, shows stats + all tasks</td><td>Both stores, TaskCard, Modal</td></tr>
+          <tr><td><code>TaskCard.vue</code></td><td>Display one task card</td><td>Parent view (via props/emits)</td></tr>
+          <tr><td><code>CreateTaskModal.vue</code></td><td>Form to create a new task</td><td>tasks store directly</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-blue" style="margin-top: 16px;">
+        <strong>💡 The golden rule of this app:</strong> <strong>Stores are the single source of truth.</strong> Components never own important data — they read from the store and write to the store. This is why deleting a task in <em>Completed</em> also removes it from <em>Dashboard</em> without any extra wiring.
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div style="text-align:center; padding: 20px; color:#a0aec0; font-size:12px;">
+    TaskBuddy Study Guide · Generated 2026 · Vue 3 + Pinia + Vue Router
+  </div>
+
+</div>
+</body>
+</html>

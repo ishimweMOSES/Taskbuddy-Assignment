@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Thinking Before Building – Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 0;
+        }
+
+        /* ── Each slide is A4-landscape-ish ratio ── */
+        .slide {
+            width: 297mm;
+            min-height: 167mm;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        /* ── Print ── */
+        @media print {
+            body {
+                background: white;
+                gap: 0;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .slide {
+                width: 100%;
+                min-height: 100vh;
+                page-break-after: always;
+                break-after: page;
+                margin: 0;
+            }
+        }
+
+        /* ════════════════════════  SLIDE 1 — COVER  ════════════════════════ */
+        .s1 {
+            background: #0E1F3D;
+            color: white;
+        }
+
+        .s1-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 10px;
+            height: 100%;
+            background: #FF6900;
+        }
+
+        .s1-circle {
+            position: absolute;
+            right: -60px;
+            top: -60px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(255, 105, 0, .10);
+        }
+
+        .s1-circle2 {
+            position: absolute;
+            right: 180px;
+            bottom: -80px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 105, 0, .07);
+        }
+
+        .s1-inner {
+            padding: 44px 56px 0 56px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #FF6900;
+            margin-bottom: 10px;
+        }
+
+        .s1-title {
+            font-size: 58px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+
+        .s1-subtitle {
+            font-size: 15px;
+            color: #8FA8CC;
+            max-width: 500px;
+            line-height: 1.65;
+            margin-bottom: 30px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            border: 1.5px solid rgba(255, 105, 0, .55);
+            background: rgba(255, 105, 0, .12);
+            color: white;
+            border-radius: 999px;
+            padding: 7px 18px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .bottom-strip {
+            margin-top: auto;
+            background: rgba(0, 0, 0, .35);
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #6B7A99;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ════════════════════════  SLIDE 2 — TOPIC  ════════════════════════ */
+        .s2 {
+            background: #F4F6F9;
+        }
+
+        .slide-header {
+            background: #0E1F3D;
+            color: white;
+            padding: 14px 40px;
+        }
+
+        .slide-header .label {
+            margin-bottom: 2px;
+        }
+
+        .slide-header h2 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .s2-body {
+            padding: 22px 40px 0;
+        }
+
+        .intro-text {
+            font-size: 13.5px;
+            color: #2D3A55;
+            line-height: 1.7;
+            max-width: 820px;
+            margin-bottom: 22px;
+        }
+
+        .cards-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 18px;
+            border-top: 5px solid #FF6900;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+        }
+
+        .card .icon {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0E1F3D;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 12px;
+            color: #4A5568;
+            line-height: 1.65;
+        }
+
+        .quote-strip {
+            margin-top: auto;
+            background: #0E1F3D;
+            padding: 11px 40px;
+            font-size: 11px;
+            color: #8FA8CC;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* ════════════════════════  SLIDE 3 — CHALLENGE  ════════════════════ */
+        .s3 {
+            background: white;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            padding: 22px 40px 0;
+        }
+
+        .col-box {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .col-box .col-head {
+            padding: 12px 18px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0E1F3D;
+        }
+
+        .col-box .col-body {
+            padding: 14px 18px;
+        }
+
+        .orange-box {
+            background: #FFF4ED;
+        }
+
+        .orange-box .col-head {
+            border-top: 5px solid #FF6900;
+            background: #fff8f3;
+        }
+
+        .blue-box {
+            background: #EAF0FF;
+        }
+
+        .blue-box .col-head {
+            border-top: 5px solid #3C67EA;
+            background: #f0f4ff;
+        }
+
+        .col-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, .07);
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        .col-item:last-child {
+            border-bottom: none;
+        }
+
+        .cross {
+            color: #E05900;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .arrow {
+            color: #3C67EA;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ════════════════════════  SLIDE 4 — SOLUTION + PERSONAS  ══════════ */
+        .s4 {
+            background: #F4F6F9;
+        }
+
+        .steps-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+            padding: 18px 40px 14px;
+        }
+
+        .step-card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px;
+            border-top: 5px solid #FF6900;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        }
+
+        .step-num {
+            font-size: 32px;
+            font-weight: 900;
+            color: #FF6900;
+            margin-bottom: 4px;
+        }
+
+        .step-card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0E1F3D;
+            margin-bottom: 7px;
+        }
+
+        .step-card p {
+            font-size: 11.5px;
+            color: #4A5568;
+            line-height: 1.65;
+        }
+
+        .personas-section {
+            padding: 0 40px 0;
+        }
+
+        .personas-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0E1F3D;
+            margin-bottom: 10px;
+        }
+
+        .personas-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .persona-card {
+            background: white;
+            border-radius: 10px;
+            padding: 14px 16px;
+            border-top: 4px solid #00A86B;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+        }
+
+        .persona-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .p-icon {
+            font-size: 24px;
+        }
+
+        .p-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0E1F3D;
+        }
+
+        .p-role {
+            font-size: 11px;
+            color: #6B7A99;
+        }
+
+        .p-trait {
+            font-size: 11.5px;
+            color: #4A5568;
+            line-height: 1.7;
+        }
+
+        .dot {
+            color: #00A86B;
+            margin-right: 4px;
+        }
+
+        /* ════════════════════════  SLIDE 5 — IMPACT  ════════════════════════ */
+        .s5 {
+            background: #0E1F3D;
+        }
+
+        .s5-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 10px;
+            height: 100%;
+            background: #FF6900;
+        }
+
+        .s5-inner {
+            padding: 0 50px 0 60px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .s5-header {
+            padding: 24px 0 20px;
+        }
+
+        .s5-header h2 {
+            font-size: 30px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.25;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .impact-card {
+            background: #122855;
+            border-radius: 10px;
+            padding: 16px 18px;
+            border-top: 4px solid #FF6900;
+        }
+
+        .impact-card .i-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .impact-card .i-icon {
+            font-size: 22px;
+        }
+
+        .impact-card .i-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .impact-card .i-body {
+            font-size: 12px;
+            color: #8FA8CC;
+            line-height: 1.65;
+        }
+
+        /* ── Print button ── */
+        .print-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: #FF6900;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 105, 0, .45);
+            font-family: 'Inter', sans-serif;
+            z-index: 999;
+        }
+
+        .print-btn:hover {
+            background: #e05900;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF</button>
+
+    <!-- ══════════════════════════ SLIDE 1 – COVER ══════════════════════════ -->
+    <div class="slide s1">
+        <div class="s1-bar"></div>
+        <div class="s1-circle"></div>
+        <div class="s1-circle2"></div>
+
+        <div class="s1-inner">
+            <div class="label">Project Overview &nbsp;·&nbsp; Human-Centred Design</div>
+            <div class="s1-title">Thinking<br>Before Building</div>
+            <div class="s1-subtitle">
+                How intentional design — not just code — creates products<br>
+                that truly serve real people.
+            </div>
+            <div class="badges">
+                <span class="badge">📋 Project Description</span>
+                <span class="badge">👤 User Personas</span>
+                <span class="badge">🔀 User Flows</span>
+            </div>
+        </div>
+
+        <div class="bottom-strip">
+            Start early &nbsp;·&nbsp; Be intentional &nbsp;·&nbsp; Take ownership
+        </div>
+    </div>
+
+    <!-- ══════════════════════════ SLIDE 2 – TOPIC ══════════════════════════ -->
+    <div class="slide s2">
+        <div class="slide-header">
+            <div class="label">Slide 1 &nbsp;·&nbsp; The Topic</div>
+            <h2>What Is This Project About?</h2>
+        </div>
+
+        <div class="s2-body">
+            <p class="intro-text">
+                Every day, people struggle with tools that feel confusing or simply weren't made for them.
+                This project is about changing that — by designing digital products that put
+                <strong>people first</strong>, before a single line of code is ever written.
+            </p>
+            <div class="cards-row">
+                <div class="card">
+                    <div class="icon">📋</div>
+                    <h3>Clear Project Description</h3>
+                    <p>Before building anything, you must be able to explain exactly <strong>what</strong> you are
+                        making, <strong>who</strong> it is for, and <strong>why</strong> it matters — in plain language
+                        that anyone can understand.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">👤</div>
+                    <h3>User Personas</h3>
+                    <p>A "persona" is a portrait of a real type of person who will use your product. We give them a
+                        name, a story, and real frustrations — so every design decision focuses on helping them.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🔀</div>
+                    <h3>User Flows</h3>
+                    <p>A user flow is a simple map that shows the steps a person takes to complete a task — like signing
+                        up or creating something. It helps us spot confusion before anything is built.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="quote-strip">
+            "This project is not only about coding — it is about thinking, designing, and building responsibly."
+        </div>
+    </div>
+
+    <!-- ══════════════════════════ SLIDE 3 – CHALLENGE ══════════════════════ -->
+    <div class="slide s3">
+        <div class="slide-header">
+            <div class="label">Slide 2 &nbsp;·&nbsp; The Challenge</div>
+            <h2>What Problem Are We Solving?</h2>
+        </div>
+
+        <div class="two-col">
+            <div class="col-box orange-box">
+                <div class="col-head">😟 &nbsp; The Reality</div>
+                <div class="col-body">
+                    <div class="col-item"><span class="cross">✗</span> Developers often start coding without a clear
+                        plan</div>
+                    <div class="col-item"><span class="cross">✗</span> Products get built for the developer, not the
+                        user</div>
+                    <div class="col-item"><span class="cross">✗</span> Teams skip thinking about who will actually use
+                        the product</div>
+                    <div class="col-item"><span class="cross">✗</span> Features are added without understanding real
+                        needs</div>
+                    <div class="col-item"><span class="cross">✗</span> Users end up confused, frustrated, or stop using
+                        the product entirely</div>
+                </div>
+            </div>
+
+            <div class="col-box blue-box">
+                <div class="col-head">⚠️ &nbsp; What Happens When We Skip Design</div>
+                <div class="col-body">
+                    <div class="col-item"><span class="arrow">→</span> Time wasted rebuilding features that don't
+                        actually work for people</div>
+                    <div class="col-item"><span class="arrow">→</span> Products that look finished but solve the wrong
+                        problem</div>
+                    <div class="col-item"><span class="arrow">→</span> Poor experience leads to low adoption and a bad
+                        reputation</div>
+                    <div class="col-item"><span class="arrow">→</span> A missed opportunity to create something truly
+                        meaningful</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quote-strip" style="background:#0E1F3D; color:#8FA8CC; margin-top:auto;">
+            The goal is not just to build something that works — but something that works <em>for people</em>.
+        </div>
+    </div>
+
+    <!-- ══════════════════════════ SLIDE 4 – SOLUTION + PERSONAS ══════════════ -->
+    <div class="slide s4">
+        <div class="slide-header">
+            <div class="label">Slide 3 &nbsp;·&nbsp; The Solution</div>
+            <h2>Design With Real People in Mind</h2>
+        </div>
+
+        <div class="steps-row">
+            <div class="step-card">
+                <div class="step-num">01</div>
+                <h3>Write a Clear Project Description</h3>
+                <p>In plain words: What does this do? Who is it for? What problem does it solve? This forces clarity and
+                    alignment before a single thing is built.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">02</div>
+                <h3>Create User Personas</h3>
+                <p>Give your users a face and a story. Understand their goals, daily habits, and frustrations — so every
+                    feature is designed FOR them, not for you.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">03</div>
+                <h3>Map the User Journey</h3>
+                <p>Draw simple step-by-step paths that show how a person reaches their goal. Find the confusing parts
+                    and fix them on paper — not after spending weeks building.</p>
+            </div>
+        </div>
+
+        <div class="personas-section">
+            <div class="personas-label">👥 &nbsp; Meet the Users</div>
+            <div class="personas-row">
+                <div class="persona-card">
+                    <div class="persona-head">
+                        <div class="p-icon">👩‍🎓</div>
+                        <div>
+                            <div class="p-name">Amara, 21</div>
+                            <div class="p-role">University Student</div>
+                        </div>
+                    </div>
+                    <div class="p-trait">
+                        <span class="dot">●</span>Overwhelmed by assignments and deadlines<br>
+                        <span class="dot">●</span>Needs a simple way to track her tasks<br>
+                        <span class="dot">●</span>Uses her phone for almost everything
+                    </div>
+                </div>
+                <div class="persona-card">
+                    <div class="persona-head">
+                        <div class="p-icon">👨‍💼</div>
+                        <div>
+                            <div class="p-name">Daniel, 34</div>
+                            <div class="p-role">Freelance Designer</div>
+                        </div>
+                    </div>
+                    <div class="p-trait">
+                        <span class="dot">●</span>Juggles multiple client projects at once<br>
+                        <span class="dot">●</span>Loses track of what is done vs. pending<br>
+                        <span class="dot">●</span>Wants clarity — not another complex tool
+                    </div>
+                </div>
+                <div class="persona-card">
+                    <div class="persona-head">
+                        <div class="p-icon">👩‍💻</div>
+                        <div>
+                            <div class="p-name">Kalisa, 23</div>
+                            <div class="p-role">Recent Graduate</div>
+                        </div>
+                    </div>
+                    <div class="p-trait">
+                        <span class="dot">●</span>Starting a new job and learning new workflows<br>
+                        <span class="dot">●</span>Wants to build strong habits from day one<br>
+                        <span class="dot">●</span>Values clean, intuitive tools that don't overwhelm
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height:14px"></div>
+    </div>
+
+    <!-- ══════════════════════════ SLIDE 5 – IMPACT ═════════════════════════ -->
+    <div class="slide s5">
+        <div class="s5-bar"></div>
+        <div class="s5-inner">
+            <div class="s5-header">
+                <div class="label">Slide 4 &nbsp;·&nbsp; The Impact</div>
+                <h2>What Changes When We<br>Design Responsibly?</h2>
+            </div>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="i-top"><span class="i-icon">🎯</span><span class="i-title">Products people actually want
+                            to use</span></div>
+                    <div class="i-body">When you design around real needs, people adopt it naturally — it doesn't need
+                        to be forced or marketed heavily.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="i-top"><span class="i-icon">⏱️</span><span class="i-title">Less time wasted, more value
+                            delivered</span></div>
+                    <div class="i-body">Catching problems in the design stage costs nothing. Fixing them after launch
+                        can cost everything — time, money, and trust.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="i-top"><span class="i-icon">❤️</span><span class="i-title">Technology that earns
+                            trust</span></div>
+                    <div class="i-body">People trust tools that feel like they were made FOR them — thoughtfully and
+                        with care. That trust becomes loyalty.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="i-top"><span class="i-icon">🚀</span><span class="i-title">A stronger foundation for
+                            building</span></div>
+                    <div class="i-body">A clear description + personas + user flows = a roadmap everyone understands —
+                        developers, designers, and users alike.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-strip">
+            Start early &nbsp;·&nbsp; Be intentional &nbsp;·&nbsp; Take ownership
+        </div>
+    </div>
+
+</body>
+
+</html>
