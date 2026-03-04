@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-primary: #FF6900;
+  --color-primary-light: #FF8C38;
+  --color-primary-dark: #E05900;
+  --color-accent: #3C67EA;
+  --color-success: #00A86B;
+  --color-warning: #F5A623;
+  --color-danger: #E53935;
+}
+
+/* ── Base resets ────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: #F4F5F7;
+  color: #1a202c;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Dark-mode base overrides ───────────────────────── */
+.dark body {
+  background-color: #0a1628;
+  color: #e2e8f0;
+}
